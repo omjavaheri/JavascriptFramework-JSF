@@ -21,7 +21,7 @@ var JSF={
     {
         var Number = ThisNumber.toString().split('.');
         if (Number.length == 2) {
-           return parseInt(Number[0]).format() + '.' + Number[0];
+           return parseInt(Number[0]).format() + '.' + Number[1];
         }
         else {
             return ThisNumber;
