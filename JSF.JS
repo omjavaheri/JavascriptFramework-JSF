@@ -210,6 +210,50 @@ var JSF = {
                 return new Date(gy, gm, gd);
             }
         }
-    }
+    },
+    ConnectToServer: {
+        GetAndPostDefaultFunction:function(URL, Success, Eroor,TypeOfConnect,data) {
+            try {
+                TypeOfConnect = (typeof TypeOfConnect === 'undefined') ? "GET" : TypeOfConnect;
+                if (typeof XMLHttpRequest === "function") {
+                    var Xhr = new XMLHttpRequest();
+                    Xhr.onreadystatechange = function () {
+                        if (Xhr.status === 200) {
+                            if (typeof Success === "function") {
+                                var _Json = JSON.parse(Xhr.responseText)
+                                Success(_Json);
+                            }
+                        }
+                        else {
+                            if (typeof Error === "function") {
+                                Error(Xhr);
+                            }
+                        }
+                    }
+                    Xhr.open(TypeOfConnect, URL, true);
+                    if (TypeOfConnect === "POST") {
+                        Xhr.setRequestHeader("Content-Type", "application/json");
+                        Xhr.send(data);
+                    } else {
+                        Xhr.send();
+                    }
+                }
+            } catch (e) {
+                if (typeof Error === "function") {
+                    Error(null);
+                }
+                console.error(e);
+            }
 
+        },
+        Get: function (URL, Success, Eroor) {
+            //http:/www.123.ir/sa.php?id=1235&d=58425
+            PublicFunction.ConnectToServer.GetAndPostDefaultFunction(URL, Success, Error, "GET");
+        },
+        Post: function (URL, Success, Eroor, data) {
+            //data must be Json or Object
+            PublicFunction.ConnectToServer.GetAndPostDefaultFunction(URL, Success, Error, "POST", data);
+        },
+        WS: {}
+    }
 }
