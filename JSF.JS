@@ -4,6 +4,146 @@ var JSF = {
         Version: '01',
         Programer: 'om.javaheri@gmail.com'
     },
+    //Here we can create or edit our Elements
+    Element: {
+        //This function Create All kind of Html elements for us
+        //tagName is our html tag name for new Element
+        //Attr is an object of all attributes that we want to assign to our new Element
+        //html is a text or another html element that we want put inside innerHTML of our Element 
+        Create: function (tagName, Attr, html) {
+
+            //Here we will return if tagName is null or undefined or empty
+            if (tagName == "" || tagName == null || typeof tagName == 'undefined') { return; }
+
+            //Create new elemnt in memory for next use
+            var EL = document.createElement(tagName);
+
+            //Check type of Attr
+            if (typeof Attr == "object") {
+                //Loop through all properties in Attr object         
+                for (var prop in Attr) {
+                    //set Attributes for new Element
+                    EL.setAttribute(prop, Attr[prop]);
+                }
+            }
+
+            //html is a text or another html element that we want put inside innerHTML of our Element 
+            if (html == "" || typeof html == "String" || typeof html == "string") {
+                EL.innerHTML = html;
+
+            } else if (html != null || typeof html == "object") {
+                EL.appendChild(html);
+            }
+            //FN is General function for All Element
+            EL.FN = {
+                Append: {
+                    AppendHtml: function (Html) { },
+                    AppendAttr: function (Name, value) { },
+                    //append is the Child in to the Element
+                    Append: function (Element) {
+                        try {
+                            if (typeof Element == "object") {
+                                EL.appendChild(Element);
+                            }
+
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    },
+                    //the Element append to Parent Node
+                    AppendTo: function (ParentNode) {
+                        try {
+                            if (typeof ParentNode == "object") {
+                                ParentNode.appendChild(EL);
+                            }
+                        } catch (e) {
+                            console.error(e);
+                        }
+
+                    },
+                },
+                Get: {
+                    GetHtml: function () { },
+                    GetAttr: function (Name) { },
+                    GetChild: function (Node) { },
+                    GetParent: function () { },
+                    GetCopy: function () { }
+                },
+                Set: {
+                    SetHtml: function (Html) { },
+                    SetAttr: function (Name, value) { },
+                },
+                Remove: {
+                    Remove: function () { },
+                    RemoveAttr: function (Name, value) { },
+                    RemoveChild: function () { },
+                    RemoveParent: function () { }
+                },
+                Display: {
+                    Hide: function () { },
+                    Show: function () { }
+                }
+
+            }
+            return EL;
+        },
+
+        //this function create INPUT HTML Element for us
+        //Attr is object like this ** var Attr = {type: 'Text',id: 'ID12',classList:'text input',value:"salam" }; **
+        GetInput: function (Attr) {
+            var Input = PublicFunction.Element.Create('INPUT', Attr);
+            return Input;
+        },
+        GetDiv: function () {
+            var Input = PublicFunction.Element.Create('div');
+            return Input;
+        }
+    },
+    ConnectToServer: {
+        GetAndPostDefaultFunction: function (URL, Success, Eroor, TypeOfConnect, data) {
+            try {
+                TypeOfConnect = (typeof TypeOfConnect === 'undefined') ? "GET" : TypeOfConnect;
+                if (typeof XMLHttpRequest === "function") {
+                    var Xhr = new XMLHttpRequest();
+                    Xhr.onreadystatechange = function () {
+                        if (Xhr.status === 200) {
+                            if (typeof Success === "function") {
+                                var _Json = JSON.parse(Xhr.responseText)
+                                Success(_Json);
+                            }
+                        }
+                        else {
+                            if (typeof Error === "function") {
+                                Error(Xhr);
+                            }
+                        }
+                    }
+                    Xhr.open(TypeOfConnect, URL, true);
+                    if (TypeOfConnect === "POST") {
+                        Xhr.setRequestHeader("Content-Type", "application/json");
+                        Xhr.send(data);
+                    } else {
+                        Xhr.send();
+                    }
+                }
+            } catch (e) {
+                if (typeof Error === "function") {
+                    Error(null);
+                }
+                console.error(e);
+            }
+
+        },
+        Get: function (URL, Success, Eroor) {
+            //http:/www.123.ir/sa.php?id=1235&d=58425
+            PublicFunction.ConnectToServer.GetAndPostDefaultFunction(URL, Success, Error, "GET");
+        },
+        Post: function (URL, Success, Eroor, data) {
+            //data must be Json or Object
+            PublicFunction.ConnectToServer.GetAndPostDefaultFunction(URL, Success, Error, "POST", data);
+        },
+        WS: {}
+    },
     Number: {
         isInt: function (n) {
             //check that a number is integer
@@ -114,7 +254,7 @@ var JSF = {
         },
         ServerDateParse: function (data) {
             //It converts the data it receives from the server into a format visible to the user
-          
+
             if (data == null) {
                 return '';
             }
@@ -142,7 +282,7 @@ var JSF = {
         },
 
         stringSetFormatDate: function (string) {
-          ///Receives a string and returns it in date format
+            ///Receives a string and returns it in date format
             if (string.length != 8) {
                 return -1;
             }
@@ -210,50 +350,5 @@ var JSF = {
                 return new Date(gy, gm, gd);
             }
         }
-    },
-    ConnectToServer: {
-        GetAndPostDefaultFunction:function(URL, Success, Eroor,TypeOfConnect,data) {
-            try {
-                TypeOfConnect = (typeof TypeOfConnect === 'undefined') ? "GET" : TypeOfConnect;
-                if (typeof XMLHttpRequest === "function") {
-                    var Xhr = new XMLHttpRequest();
-                    Xhr.onreadystatechange = function () {
-                        if (Xhr.status === 200) {
-                            if (typeof Success === "function") {
-                                var _Json = JSON.parse(Xhr.responseText)
-                                Success(_Json);
-                            }
-                        }
-                        else {
-                            if (typeof Error === "function") {
-                                Error(Xhr);
-                            }
-                        }
-                    }
-                    Xhr.open(TypeOfConnect, URL, true);
-                    if (TypeOfConnect === "POST") {
-                        Xhr.setRequestHeader("Content-Type", "application/json");
-                        Xhr.send(data);
-                    } else {
-                        Xhr.send();
-                    }
-                }
-            } catch (e) {
-                if (typeof Error === "function") {
-                    Error(null);
-                }
-                console.error(e);
-            }
-
-        },
-        Get: function (URL, Success, Eroor) {
-            //http:/www.123.ir/sa.php?id=1235&d=58425
-            PublicFunction.ConnectToServer.GetAndPostDefaultFunction(URL, Success, Error, "GET");
-        },
-        Post: function (URL, Success, Eroor, data) {
-            //data must be Json or Object
-            PublicFunction.ConnectToServer.GetAndPostDefaultFunction(URL, Success, Error, "POST", data);
-        },
-        WS: {}
     }
 }
