@@ -3,4 +3,4 @@ in This project, i saved all the required JavaScript functions. in all programmi
 
 **JSF** is stands for **JavaScript Framework**
 you can call JSF just by enter this code in web page header
-<script src="JSF.JS " type="text/javascript"></script>
+```<script src="JSF.JS " type="text/javascript"></script>```
