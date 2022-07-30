@@ -6,4 +6,4 @@ you can call JSF just by enter this code in web page header
 
 ```<script src="JSF.JS " type="text/javascript"></script>```
 
-# Create All type of Html elements by JSF.Javascript Framework
+# Create All type of Html elements by JSF Javascript Framework
